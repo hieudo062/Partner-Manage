@@ -1,5 +1,6 @@
 package com.unikom.partnermanage.entity;
 
+import com.unikom.partnermanage.dto.PartnerDTO;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -22,5 +23,16 @@ public class PartnerEntity {
     private String createdBy;
     private String modifiedAt;
     private String modifiedBy;
+
+    private PartnerDTO toDTO() {
+
+        PartnerDTO partnerDTO = new PartnerDTO();
+        partnerDTO.setCode(this.code);
+        partnerDTO.setName(this.name);
+        partnerDTO.setFounderYear(this.foundedYear);
+        partnerDTO.setQuantityOfEmployee(this.quantityOfEmployee);
+
+        return null;
+    }
 
 }

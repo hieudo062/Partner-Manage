@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface IPartnerRepository extends JpaRepository {
+public interface IPartnerRepository extends JpaRepository<PartnerEntity, Long> {
 
     @Query("select p from PartnerEntity p where p.code like %:code% and p.name like %:name%")
     List<PartnerEntity> searchPartner(String code, String name);
