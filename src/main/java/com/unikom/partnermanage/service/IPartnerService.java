@@ -1,18 +1,15 @@
 package com.unikom.partnermanage.service;
 
 import com.unikom.partnermanage.dto.PartnerDTO;
-import com.unikom.partnermanage.entity.PartnerEntity;
-import lombok.AllArgsConstructor;
-import org.springframework.stereotype.Service;
+import com.unikom.partnermanage.entity.Partner;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface IPartnerService {
 
-    PartnerEntity save(PartnerEntity partner);
+    Partner save(Partner partner);
     void deleteById(Long id);
-    List<PartnerEntity> search(PartnerDTO partnerDTO);
-    Optional<PartnerEntity> findById(Long id);
+    List<PartnerDTO> search(PartnerDTO partnerDTO);
+    PartnerDTO findById(Long id);
 
 }
