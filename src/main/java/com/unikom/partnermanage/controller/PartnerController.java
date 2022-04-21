@@ -4,6 +4,8 @@ import com.unikom.partnermanage.dto.PartnerDTO;
 import com.unikom.partnermanage.entity.Partner;
 import com.unikom.partnermanage.service.impl.PartnerService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +24,12 @@ public class PartnerController {
     @GetMapping("/search")
     public ResponseEntity<List<PartnerDTO>> search(@RequestBody PartnerDTO partnerDTO) {
         return new ResponseEntity<>(partnerService.search(partnerDTO), HttpStatus.OK);
+    }
+
+    //    Search by name, code, foundedYear, quantityOfEmployee
+    @GetMapping("/searchpage")
+    public ResponseEntity<Page<PartnerDTO>> searchPage(@RequestBody PartnerDTO partnerDTO, @RequestBody Pageable pageable) {
+        return new ResponseEntity<>(partnerService.searchPage(partnerDTO, pageable), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")

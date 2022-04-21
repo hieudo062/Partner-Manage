@@ -16,6 +16,7 @@ public class PartnerDTO {
     private int quantityOfEmployee;
     private String address;
     private int startToCooperate;
+    private Page page;
 
     public PartnerDTO(Partner source){
         BeanUtils.copyProperties(source, this);
