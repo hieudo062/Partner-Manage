@@ -46,7 +46,6 @@ public class Partner {
     private String modifiedBy;
 
     public Partner() {
-
     }
 
     public Partner(PartnerDTO source) {

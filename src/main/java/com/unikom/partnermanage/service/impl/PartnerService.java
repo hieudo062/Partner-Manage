@@ -1,17 +1,21 @@
 package com.unikom.partnermanage.service.impl;
 
 import com.unikom.partnermanage.dto.PartnerDTO;
+import com.unikom.partnermanage.dto.Search;
 import com.unikom.partnermanage.entity.Partner;
 import com.unikom.partnermanage.repository.IPartnerRepository;
 import com.unikom.partnermanage.service.IPartnerService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.servlet.http.Part;
 import java.util.*;
 
 @Service
@@ -23,13 +27,9 @@ public class PartnerService implements IPartnerService {
     @PersistenceContext
     private EntityManager entityManager;
 
-    public List<PartnerDTO> getAllPartner() {
-        return this.convertToDTO(partnerRepository.findAll());
-    }
-
     @Override
-    public Partner save(Partner partner) {
-        return partnerRepository.save(partner);
+    public PartnerDTO save(PartnerDTO partner) {
+        return new PartnerDTO(partnerRepository.save(new Partner(partner)));
     }
 
     @Override
@@ -38,89 +38,43 @@ public class PartnerService implements IPartnerService {
     }
 
     @Override
-    public List<PartnerDTO> search(PartnerDTO partnerDTO) {
+    public Page<PartnerDTO> search(Search search, Pageable pageable) {
         StringBuilder builder = new StringBuilder();
         Map<String, Object> params = new HashMap<>();
+
         builder.append(" SELECT p ");
         builder.append(" FROM Partner p ");
         builder.append(" WHERE 1=1 ");
-        if (partnerDTO.getCode() != null) {
+        if (search.getCode() != null) {
             builder.append(" AND p.code like :code ");
-//            params.put("code", "%" + partnerDTO.getCode() + "%");
+            params.put("code", "%" + search.getCode() + "%");
         }
-        if (partnerDTO.getName() != null) {
-            builder.append(" AND p.name like :name ");
-//            params.put("name", "%" + partnerDTO.getName() + "%");
+        if (search.getName() != null) {
+            builder.append(" AND p.code like :name ");
+            params.put("name", "%" + search.getName() + "%");
         }
-        if (partnerDTO.getFoundedYear() != 0) {
-            builder.append(" AND p.foundedYear = :foundedYear ");
-//            params.put("foundedYear", "%" + partnerDTO.getFoundedYear() + "%");
+        Optional<Integer> foundedYear = Optional.ofNullable(search.getFoundedYear());
+        if (foundedYear.equals(0)) {
+            builder.append(" AND p.code = :foundedYear ");
+            params.put("foundedYear", foundedYear);
         }
-        if (partnerDTO.getQuantityOfEmployee() != 0) {
-            builder.append(" AND p.quantityOfEmployee = :quantityOfEmployee ");
-//            params.put("quantityOfEmployee", "%" + partnerDTO.getQuantityOfEmployee() + "%");
+        Optional<Integer> quantityOfEmployee = Optional.ofNullable(search.getQuantityOfEmployee());
+        if (quantityOfEmployee.equals(0)) {
+            builder.append(" AND p.code = :quantityOfEmployee ");
+            params.put("quantityOfEmployee", quantityOfEmployee);
         }
 
         Query query = entityManager.createQuery(builder.toString());
-        if (partnerDTO.getCode() != null) {
-            query.setParameter("code", "%" + partnerDTO.getCode() + "%");
-        }
-        if (partnerDTO.getName() != null) {
-            query.setParameter("name", "%" + partnerDTO.getCode() + "%");
-        }
-        if (partnerDTO.getFoundedYear() != 0) {
-            query.setParameter("foundedYear", partnerDTO.getFoundedYear());
-        }
-        if (partnerDTO.getQuantityOfEmployee() != 0) {
-            query.setParameter("quantityOfEmployee", partnerDTO.getQuantityOfEmployee());
-        }
-        query.setFirstResult(partnerDTO.getPage().getOffset());
-        query.setMaxResults(partnerDTO.getPage().getSize());
-        List<Partner> list = query.getResultList();
-        return convertToDTO(query.getResultList());
 
+        for (String key : params.keySet()) {
+            query.setParameter(key, params.get(key));
+        }
+
+        List<PartnerDTO> partners = query.getResultList();
+        Page<PartnerDTO> page = new PageImpl<PartnerDTO>(partners, pageable, partners.size());
+        PageRequest.of(0,20);
+        return page;
     }
-
-    @Override
-    public Page<PartnerDTO> searchPage(PartnerDTO partnerDTO, Pageable pageable) {
-        StringBuilder builder = new StringBuilder();
-        Map<String, Object> params = new HashMap<>();
-        builder.append(" SELECT p ");
-        builder.append(" FROM Partner p ");
-        builder.append(" WHERE 1=1 ");
-        if (partnerDTO.getCode() != null) {
-            builder.append(" AND p.code like :code ");
-//            params.put("code", "%" + partnerDTO.getCode() + "%");
-        }
-        if (partnerDTO.getName() != null) {
-            builder.append(" AND p.name like :name ");
-//            params.put("name", "%" + partnerDTO.getName() + "%");
-        }
-        if (partnerDTO.getFoundedYear() != 0) {
-            builder.append(" AND p.foundedYear = :foundedYear ");
-//            params.put("foundedYear", "%" + partnerDTO.getFoundedYear() + "%");
-        }
-        if (partnerDTO.getQuantityOfEmployee() != 0) {
-            builder.append(" AND p.quantityOfEmployee = :quantityOfEmployee ");
-//            params.put("quantityOfEmployee", "%" + partnerDTO.getQuantityOfEmployee() + "%");
-        }
-
-        Query query = entityManager.createQuery(builder.toString());
-        if (partnerDTO.getCode() != null) {
-            query.setParameter("code", "%" + partnerDTO.getCode() + "%");
-        }
-        if (partnerDTO.getName() != null) {
-            query.setParameter("name", "%" + partnerDTO.getCode() + "%");
-        }
-        if (partnerDTO.getFoundedYear() != 0) {
-            query.setParameter("foundedYear", partnerDTO.getFoundedYear());
-        }
-        if (partnerDTO.getQuantityOfEmployee() != 0) {
-            query.setParameter("quantityOfEmployee", partnerDTO.getQuantityOfEmployee());
-        }
-        return null;
-    }
-
 
     @Override
     public PartnerDTO findById(Long id) {
@@ -129,11 +83,10 @@ public class PartnerService implements IPartnerService {
 
     private List<PartnerDTO> convertToDTO(List<Partner> partnerEntities) {
         List<PartnerDTO> partnerDTOs = new ArrayList<>();
-
         for (Partner partner : partnerEntities) {
             partnerDTOs.add(new PartnerDTO(partner));
         }
-
         return partnerDTOs;
     }
+
 }

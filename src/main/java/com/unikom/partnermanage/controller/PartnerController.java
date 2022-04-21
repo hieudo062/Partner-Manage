@@ -1,6 +1,7 @@
 package com.unikom.partnermanage.controller;
 
 import com.unikom.partnermanage.dto.PartnerDTO;
+import com.unikom.partnermanage.dto.Search;
 import com.unikom.partnermanage.entity.Partner;
 import com.unikom.partnermanage.service.impl.PartnerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.OptionalInt;
 
 @RestController
 @RequestMapping("/partner")
@@ -20,16 +23,18 @@ public class PartnerController {
     @Autowired
     private PartnerService partnerService;
 
-//    Search by name, code, foundedYear, quantityOfEmployee
     @GetMapping("/search")
-    public ResponseEntity<List<PartnerDTO>> search(@RequestBody PartnerDTO partnerDTO) {
-        return new ResponseEntity<>(partnerService.search(partnerDTO), HttpStatus.OK);
-    }
-
-    //    Search by name, code, foundedYear, quantityOfEmployee
-    @GetMapping("/searchpage")
-    public ResponseEntity<Page<PartnerDTO>> searchPage(@RequestBody PartnerDTO partnerDTO, @RequestBody Pageable pageable) {
-        return new ResponseEntity<>(partnerService.searchPage(partnerDTO, pageable), HttpStatus.OK);
+    public ResponseEntity<Page<PartnerDTO>> search(@RequestParam(required = false) String code,
+                                                   @RequestParam(required = false) String name,
+                                                   @RequestParam(required = false) Integer foundedYear,
+                                                   @RequestParam(required = false) Integer quantityOfEmployee,
+                                                   Pageable pageable) {
+        Search search = new Search();
+        search.setCode(code);
+        search.setName(name);
+        search.setFoundedYear(foundedYear);
+        search.setQuantityOfEmployee(quantityOfEmployee);
+        return new ResponseEntity<>(partnerService.search(search, pageable), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
@@ -38,13 +43,13 @@ public class PartnerController {
     }
 
     @PostMapping
-    public ResponseEntity<?> create(@RequestBody Partner partner) {
+    public ResponseEntity<?> create(@RequestBody PartnerDTO partner) {
         partnerService.save(partner);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody Partner partner) {
+    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody PartnerDTO partner) {
         partner.setId(id);
         partnerService.save(partner);
         return new ResponseEntity<>(HttpStatus.OK);

@@ -10,13 +10,13 @@ import org.springframework.beans.BeanUtils;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PartnerDTO {
+    private Long id;
     private String code;
     private String name;
     private int foundedYear;
     private int quantityOfEmployee;
     private String address;
     private int startToCooperate;
-    private Page page;
 
     public PartnerDTO(Partner source){
         BeanUtils.copyProperties(source, this);
