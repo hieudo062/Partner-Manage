@@ -45,6 +45,9 @@ public class Partner {
     @Column(name = "modified_by")
     private String modifiedBy;
 
+    @Column(name = "is_deleteed")
+    private Boolean isDeleteed;
+
     public Partner() {
     }
 

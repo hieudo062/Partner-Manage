@@ -17,8 +17,11 @@ public class PartnerDTO {
     private int quantityOfEmployee;
     private String address;
     private int startToCooperate;
+    private Boolean isDeleteed = false;
+
+    public void update(PartnerDTO source) { BeanUtils.copyProperties(source, this, "id"); }
 
     public PartnerDTO(Partner source){
-        BeanUtils.copyProperties(source, this);
+        BeanUtils.copyProperties(source, this, "isDeleteed");
     }
 }

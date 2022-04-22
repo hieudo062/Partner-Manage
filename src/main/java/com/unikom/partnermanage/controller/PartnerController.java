@@ -6,6 +6,7 @@ import com.unikom.partnermanage.service.impl.PartnerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,6 +27,8 @@ public class PartnerController {
                                                    @RequestParam(required = false) String name,
                                                    @RequestParam(required = false) Integer foundedYear,
                                                    @RequestParam(required = false) Integer quantityOfEmployee,
+                                                   @RequestParam(required = true) int page,
+                                                   @RequestParam(required = true) int size,
                                                    Pageable pageable) {
         Search search = new Search();
         search.setCode(code);
@@ -35,7 +38,12 @@ public class PartnerController {
         Integer quantityOfEmployeeInt = quantityOfEmployee == null ? 0 : quantityOfEmployee;
         search.setQuantityOfEmployee(quantityOfEmployeeInt);
 
-        return new ResponseEntity<>(partnerService.search(search, pageable), HttpStatus.OK);
+        return new ResponseEntity<>(partnerService.search(search, page, size, pageable), HttpStatus.OK);
+    }
+
+    @GetMapping()
+    public ResponseEntity<?> search(Pageable pageable) {
+        return new ResponseEntity<>(partnerService.findAll(pageable), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
