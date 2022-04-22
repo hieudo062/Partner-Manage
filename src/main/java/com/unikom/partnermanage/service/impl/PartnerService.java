@@ -50,18 +50,16 @@ public class PartnerService implements IPartnerService {
             params.put("code", "%" + search.getCode() + "%");
         }
         if (search.getName() != null) {
-            builder.append(" AND p.code like :name ");
+            builder.append(" AND p.name like :name ");
             params.put("name", "%" + search.getName() + "%");
         }
-        Optional<Integer> foundedYear = Optional.ofNullable(search.getFoundedYear());
-        if (foundedYear.equals(0)) {
-            builder.append(" AND p.code = :foundedYear ");
-            params.put("foundedYear", foundedYear);
+        if (search.getFoundedYear() != 0) {
+            builder.append(" AND p.foundedYear like :foundedYear ");
+            params.put("foundedYear", search.getFoundedYear());
         }
-        Optional<Integer> quantityOfEmployee = Optional.ofNullable(search.getQuantityOfEmployee());
-        if (quantityOfEmployee.equals(0)) {
-            builder.append(" AND p.code = :quantityOfEmployee ");
-            params.put("quantityOfEmployee", quantityOfEmployee);
+        if (search.getQuantityOfEmployee() != 0) {
+            builder.append(" AND p.quantityOfEmployee = :quantityOfEmployee ");
+            params.put("quantityOfEmployee", search.getQuantityOfEmployee());
         }
 
         Query query = entityManager.createQuery(builder.toString());
@@ -72,7 +70,7 @@ public class PartnerService implements IPartnerService {
 
         List<PartnerDTO> partners = query.getResultList();
         Page<PartnerDTO> page = new PageImpl<PartnerDTO>(partners, pageable, partners.size());
-        PageRequest.of(0,20);
+        PageRequest.of(0,10);
         return page;
     }
 

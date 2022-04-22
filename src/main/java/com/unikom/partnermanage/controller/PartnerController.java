@@ -2,7 +2,6 @@ package com.unikom.partnermanage.controller;
 
 import com.unikom.partnermanage.dto.PartnerDTO;
 import com.unikom.partnermanage.dto.Search;
-import com.unikom.partnermanage.entity.Partner;
 import com.unikom.partnermanage.service.impl.PartnerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -11,7 +10,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.OptionalInt;
 
@@ -32,8 +30,11 @@ public class PartnerController {
         Search search = new Search();
         search.setCode(code);
         search.setName(name);
-        search.setFoundedYear(foundedYear);
-        search.setQuantityOfEmployee(quantityOfEmployee);
+        Integer foundedYearInt = foundedYear == null ? 0 : foundedYear;
+        search.setFoundedYear(foundedYearInt);
+        Integer quantityOfEmployeeInt = quantityOfEmployee == null ? 0 : quantityOfEmployee;
+        search.setQuantityOfEmployee(quantityOfEmployeeInt);
+
         return new ResponseEntity<>(partnerService.search(search, pageable), HttpStatus.OK);
     }
 

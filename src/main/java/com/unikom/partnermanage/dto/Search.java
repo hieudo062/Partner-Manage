@@ -7,7 +7,7 @@ public class Search {
 
     private String code;
     private String name;
-    private int foundedYear;
-    private int quantityOfEmployee;
+    private Integer foundedYear;
+    private Integer quantityOfEmployee;
 
 }
