@@ -13,7 +13,7 @@ public interface IPartnerService {
 
     PartnerDTO save(PartnerDTO partnerDTO);
     void deleteById(Long id);
-    Page<PartnerDTO> search(Search search, int page, int size, Pageable pageable);
+    Page<PartnerDTO> search(Search search, Pageable pageable);
     PartnerDTO findById(Long id);
     PartnerDTO update(Long id, PartnerDTO partnerDTO);
     int count(Search search);

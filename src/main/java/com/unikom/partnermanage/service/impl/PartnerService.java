@@ -72,7 +72,7 @@ public class PartnerService implements IPartnerService {
     }
 
     @Override
-    public Page<PartnerDTO> search(Search search, int page, int size, Pageable pageable) {
+    public Page<PartnerDTO> search(Search search, Pageable pageable) {
 
         int totalRecord = this.count(search);
 
@@ -100,12 +100,13 @@ public class PartnerService implements IPartnerService {
             params.put("quantityOfEmployee", search.getQuantityOfEmployee());
         }
 
-        Query query = entityManager.createQuery(builder.toString()).setMaxResults(size).setFirstResult((page - 1) * size);
+        Query query = entityManager.createQuery(builder.toString())
+                .setMaxResults(pageable.getPageSize())
+                .setFirstResult((int) pageable.getOffset());
         for (String key : params.keySet()) {
             query.setParameter(key, params.get(key));
         }
-        PageImpl pageImpl = new PageImpl<PartnerDTO>(query.getResultList(), pageable, totalRecord);
-        return pageImpl;
+        return new PageImpl<PartnerDTO>(query.getResultList(), pageable, totalRecord);
     }
 
 
