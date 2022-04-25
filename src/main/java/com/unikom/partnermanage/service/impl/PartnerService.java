@@ -43,6 +43,7 @@ public class PartnerService implements IPartnerService {
         builder.append(" SELECT COUNT(*) ");
         builder.append(" FROM Partner p ");
         builder.append(" WHERE 1=1 ");
+        builder.append(" AND isDeleteed = 0 ");
 
         Map<String, Object> params = new HashMap<>();
 
@@ -67,8 +68,7 @@ public class PartnerService implements IPartnerService {
         for (String key : params.keySet()) {
             query.setParameter(key, params.get(key));
         }
-        List<Partner> partners = query.getResultList();
-        return partners.size();
+        return (query.getSingleResult().hashCode());
     }
 
     @Override
@@ -80,6 +80,7 @@ public class PartnerService implements IPartnerService {
         builder.append(" SELECT p ");
         builder.append(" FROM Partner p ");
         builder.append(" WHERE 1=1 ");
+        builder.append(" AND isDeleteed = 0 ");
 
         Map<String, Object> params = new HashMap<>();
 
