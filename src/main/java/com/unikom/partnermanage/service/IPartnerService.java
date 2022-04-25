@@ -1,13 +1,9 @@
 package com.unikom.partnermanage.service;
 
-import com.unikom.partnermanage.dto.PartnerDTO;
-import com.unikom.partnermanage.dto.Search;
-import com.unikom.partnermanage.entity.Partner;
+import com.unikom.partnermanage.dto.response.PartnerDTO;
+import com.unikom.partnermanage.dto.request.Search;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-
-import javax.servlet.http.Part;
-import java.util.List;
 
 public interface IPartnerService {
 

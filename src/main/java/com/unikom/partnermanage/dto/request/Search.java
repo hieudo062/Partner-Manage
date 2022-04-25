@@ -1,4 +1,4 @@
-package com.unikom.partnermanage.dto;
+package com.unikom.partnermanage.dto.request;
 
 import lombok.Data;
 

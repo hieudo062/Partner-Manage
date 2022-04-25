@@ -1,7 +1,7 @@
 package com.unikom.partnermanage.service.impl;
 
-import com.unikom.partnermanage.dto.PartnerDTO;
-import com.unikom.partnermanage.dto.Search;
+import com.unikom.partnermanage.dto.response.PartnerDTO;
+import com.unikom.partnermanage.dto.request.Search;
 import com.unikom.partnermanage.entity.Partner;
 import com.unikom.partnermanage.repository.IPartnerRepository;
 import com.unikom.partnermanage.service.IPartnerService;
@@ -114,7 +114,7 @@ public class PartnerService implements IPartnerService {
 
     @Override
     public PartnerDTO findById(Long id) {
-        return partnerRepository.findById(id).map(PartnerDTO::new).orElseThrow(() -> new RuntimeException());
+        return partnerRepository.findByIdAndIsDeleteed(id, true).map(PartnerDTO::new).orElseThrow(() -> new RuntimeException());
     }
 
     @Override

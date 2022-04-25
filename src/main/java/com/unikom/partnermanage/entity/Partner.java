@@ -1,7 +1,8 @@
 package com.unikom.partnermanage.entity;
 
-import com.unikom.partnermanage.dto.PartnerDTO;
+import com.unikom.partnermanage.dto.response.PartnerDTO;
 import lombok.Data;
+import net.bytebuddy.implementation.bind.annotation.Default;
 import org.springframework.beans.BeanUtils;
 
 import javax.persistence.*;

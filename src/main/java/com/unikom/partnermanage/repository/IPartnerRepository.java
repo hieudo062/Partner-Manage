@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface IPartnerRepository extends JpaRepository<Partner, Long> {
@@ -23,5 +24,7 @@ public interface IPartnerRepository extends JpaRepository<Partner, Long> {
 //            "and p.founded_year = :foundedYear " +
 //            "and p.quantity_of_employee = :quantityOfEmployee ", nativeQuery = true)
 //    Page<Partner> searchPageable(String code, String name, int foundedYear, int quantityOfEmployee, Pageable pageable);
+
+    Optional<Partner> findByIdAndIsDeleteed(Long id, boolean isDeleteed);
 
 }

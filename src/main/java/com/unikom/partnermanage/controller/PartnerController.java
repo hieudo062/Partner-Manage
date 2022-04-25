@@ -1,19 +1,16 @@
 package com.unikom.partnermanage.controller;
 
-import com.unikom.partnermanage.dto.PartnerDTO;
-import com.unikom.partnermanage.dto.Search;
+import com.unikom.partnermanage.dto.response.PartnerDTO;
+import com.unikom.partnermanage.dto.request.Search;
+import com.unikom.partnermanage.dto.response.SuccessResponse;
 import com.unikom.partnermanage.service.impl.PartnerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Optional;
-import java.util.OptionalInt;
 
 @RestController
 @RequestMapping("/partner")
@@ -24,11 +21,11 @@ public class PartnerController {
     private PartnerService partnerService;
 
     @GetMapping("/search")
-    public ResponseEntity<Page<PartnerDTO>> search(@RequestParam(required = false) String code,
+    public ResponseEntity<?> search(@RequestParam(required = false) String code,
                                                    @RequestParam(required = false) String name,
                                                    @RequestParam(required = false) Integer foundedYear,
                                                    @RequestParam(required = false) Integer quantityOfEmployee,
-                                                   @RequestParam(required = true, defaultValue = "1") int page,
+                                                   @RequestParam(required = true, defaultValue = "0") int page,
                                                    @RequestParam(required = true, defaultValue = "10") int size) {
         Search search = new Search();
         search.setCode(code);
@@ -37,10 +34,9 @@ public class PartnerController {
         search.setFoundedYear(foundedYearInt);
         Integer quantityOfEmployeeInt = quantityOfEmployee == null ? 0 : quantityOfEmployee;
         search.setQuantityOfEmployee(quantityOfEmployeeInt);
+        Pageable pageable = PageRequest.of(page - 1, size);
 
-        Pageable pageable = PageRequest.of(page, size);
-
-        return new ResponseEntity<>(partnerService.search(search, pageable), HttpStatus.OK);
+        return new ResponseEntity<>(new SuccessResponse(1, partnerService.count(search), partnerService.search(search, pageable)), HttpStatus.OK);
     }
 
     @GetMapping()

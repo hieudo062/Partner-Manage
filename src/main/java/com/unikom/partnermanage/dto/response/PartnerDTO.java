@@ -1,4 +1,4 @@
-package com.unikom.partnermanage.dto;
+package com.unikom.partnermanage.dto.response;
 
 import com.unikom.partnermanage.entity.Partner;
 import lombok.AllArgsConstructor;
