@@ -25,6 +25,6 @@ public interface IPartnerRepository extends JpaRepository<Partner, Long> {
 //            "and p.quantity_of_employee = :quantityOfEmployee ", nativeQuery = true)
 //    Page<Partner> searchPageable(String code, String name, int foundedYear, int quantityOfEmployee, Pageable pageable);
 
-    Optional<Partner> findByIdAndIsDeleteed(Long id, boolean isDeleteed);
+    Optional<Partner> findByIdAndIsDeletedIsFalse(Long id);
 
 }

@@ -1,11 +1,14 @@
 package com.unikom.partnermanage.entity;
 
-import com.unikom.partnermanage.dto.response.PartnerDTO;
+import com.unikom.partnermanage.dto.PartnerDTO;
 import lombok.Data;
 import net.bytebuddy.implementation.bind.annotation.Default;
 import org.springframework.beans.BeanUtils;
 
 import javax.persistence.*;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 @Data
 @Entity
@@ -17,9 +20,12 @@ public class Partner {
     private Long id;
 
     @Column(name = "code")
+    @NotNull(message = "Code cannot be empty")
+    @Size(min = 3, max = 10, message = "Code must be more than 3 character")
     private String code;
 
     @Column(name = "name")
+    @NotNull(message = "Name cannot be empty")
     private String name;
 
     @Column(name = "founded_year")
@@ -46,8 +52,8 @@ public class Partner {
     @Column(name = "modified_by")
     private String modifiedBy;
 
-    @Column(name = "is_deleteed")
-    private Boolean isDeleteed;
+    @Column(name = "is_deleted")
+    private Boolean isDeleted;
 
     public Partner() {
     }

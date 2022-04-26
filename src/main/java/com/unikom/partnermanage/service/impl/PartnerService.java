@@ -1,6 +1,6 @@
 package com.unikom.partnermanage.service.impl;
 
-import com.unikom.partnermanage.dto.response.PartnerDTO;
+import com.unikom.partnermanage.dto.PartnerDTO;
 import com.unikom.partnermanage.dto.request.Search;
 import com.unikom.partnermanage.entity.Partner;
 import com.unikom.partnermanage.repository.IPartnerRepository;
@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.social.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
@@ -31,19 +32,19 @@ public class PartnerService implements IPartnerService {
     }
 
     @Override
-    public void deleteById(Long id) {
-        PartnerDTO partnerDTO = this.findById(id);
-        partnerDTO.setIsDeleteed(true);
-        partnerRepository.save(new Partner(partnerDTO));
+    public PartnerDTO delete(Long id) {
+        Partner partner = partnerRepository.findByIdAndIsDeletedIsFalse(id).orElseThrow(() -> new ResourceNotFoundException("Partner", "PartnerID does not exist!"));
+        partner.setIsDeleted(true);
+        return new PartnerDTO(partnerRepository.save(partner));
     }
 
     @Override
-    public int count(Search search) {
+    public long count(Search search) {
         StringBuilder builder = new StringBuilder();
         builder.append(" SELECT COUNT(*) ");
         builder.append(" FROM Partner p ");
         builder.append(" WHERE 1=1 ");
-        builder.append(" AND isDeleteed = 0 ");
+        builder.append(" AND isDeleted = 0 ");
 
         Map<String, Object> params = new HashMap<>();
 
@@ -55,11 +56,11 @@ public class PartnerService implements IPartnerService {
             builder.append(" AND p.name like :name ");
             params.put("name", "%" + search.getName() + "%");
         }
-        if (search.getFoundedYear() != 0) {
+        if (search.getFoundedYear() != null) {
             builder.append(" AND p.foundedYear like :foundedYear ");
             params.put("foundedYear", search.getFoundedYear());
         }
-        if (search.getQuantityOfEmployee() != 0) {
+        if (search.getQuantityOfEmployee()  != null) {
             builder.append(" AND p.quantityOfEmployee = :quantityOfEmployee ");
             params.put("quantityOfEmployee", search.getQuantityOfEmployee());
         }
@@ -68,13 +69,13 @@ public class PartnerService implements IPartnerService {
         for (String key : params.keySet()) {
             query.setParameter(key, params.get(key));
         }
-        return (query.getSingleResult().hashCode());
+        return (long) query.getSingleResult();
     }
 
     @Override
     public Page<PartnerDTO> search(Search search, Pageable pageable) {
 
-        int totalRecord = this.count(search);
+        long totalRecord = this.count(search);
 
         StringBuilder builder = new StringBuilder();
         builder.append(" SELECT p ");
@@ -92,11 +93,11 @@ public class PartnerService implements IPartnerService {
             builder.append(" AND p.name like :name ");
             params.put("name", "%" + search.getName() + "%");
         }
-        if (search.getFoundedYear() != 0) {
+        if (search.getFoundedYear() != null) {
             builder.append(" AND p.foundedYear like :foundedYear ");
             params.put("foundedYear", search.getFoundedYear());
         }
-        if (search.getQuantityOfEmployee() != 0) {
+        if (search.getQuantityOfEmployee() != null) {
             builder.append(" AND p.quantityOfEmployee = :quantityOfEmployee ");
             params.put("quantityOfEmployee", search.getQuantityOfEmployee());
         }
@@ -114,12 +115,12 @@ public class PartnerService implements IPartnerService {
 
     @Override
     public PartnerDTO findById(Long id) {
-        return partnerRepository.findByIdAndIsDeleteed(id, true).map(PartnerDTO::new).orElseThrow(() -> new RuntimeException());
+        return partnerRepository.findByIdAndIsDeletedIsFalse(id).map(PartnerDTO::new).orElseThrow(() -> new ResourceNotFoundException("Partner", "Partner does not exist!"));
     }
 
     @Override
     public PartnerDTO update(Long id, PartnerDTO partnerDTO) {
-        PartnerDTO p = partnerRepository.findById(id).map(PartnerDTO::new).orElseThrow(() -> new RuntimeException());
+        PartnerDTO p = partnerRepository.findByIdAndIsDeletedIsFalse(id).map(PartnerDTO::new).orElseThrow(() -> new ResourceNotFoundException("Partner", "Partner does not exist!"));
         p.update(partnerDTO);
         partnerRepository.save(new Partner(p));
         return p;
