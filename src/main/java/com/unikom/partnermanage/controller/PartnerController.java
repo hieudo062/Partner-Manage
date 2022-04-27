@@ -6,7 +6,6 @@ import com.unikom.partnermanage.dto.response.SuccessResponse;
 import com.unikom.partnermanage.dto.response.SuccessResponsePage;
 import com.unikom.partnermanage.service.impl.PartnerService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -27,11 +26,11 @@ public class PartnerController {
 
     @GetMapping("/search")
     public ResponseEntity<?> search(@RequestParam(required = false) String code,
-                                                   @RequestParam(required = false) String name,
-                                                   @RequestParam(required = false) Integer foundedYear,
-                                                   @RequestParam(required = false) Integer quantityOfEmployee,
-                                                   @RequestParam(required = true, defaultValue = "1") int page,
-                                                   @RequestParam(required = true, defaultValue = "10") int size) {
+                                    @RequestParam(required = false) String name,
+                                    @RequestParam(required = false) Integer foundedYear,
+                                    @RequestParam(required = false) Integer quantityOfEmployee,
+                                    @RequestParam(required = true, defaultValue = "1") int page,
+                                    @RequestParam(required = true, defaultValue = "10") int size) {
         Search search = new Search(code, name, foundedYear, quantityOfEmployee);
         Pageable pageable = PageRequest.of(page - 1, size);
 
